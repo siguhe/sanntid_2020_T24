@@ -8,7 +8,7 @@ CFLAGS = -g -Wall -std=c99
 LDFLAGS = -g
 
 #listfo sources
-SORUCES = $(shell find -name "*.c")
+SOURCES = $(shell find -name "*.c")
 
 #default rule, to compile everything
 all: $(TARGET)
