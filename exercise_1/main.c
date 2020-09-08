@@ -46,15 +46,13 @@ void busy_wait(struct timespec t){
 
 void busy_wait_times(int sec){
 	struct tms tmp = {0};
-
 	unsigned long long start_time = times(&tmp);
-	unsigned long long future = 0;
+	unsigned long long elapsed_time = start_time;
 
-	printf("now: utime=%d, stime=%d, return=%d\n", tmp.tms_utime, tmp.tms_stime, start_time);
-	//struct timespec then = timespec_add(now, t);
-	while(future - start_time > sec*100){
+	//printf("now: utime=%d, stime=%d, return=%d\n", tmp.tms_utime, tmp.tms_stime, start_time);
+	while(elapsed_time < start_time + sec*100){
 		for(int i = 0; i < 10000; i++){}
-		future = times(&tmp);
+		elapsed_time = times(&tmp);
 	}
 }
 
@@ -73,7 +71,7 @@ int main(int argc, char *argv[])
 	//nanosleep(&t1, &t2);
 	
 	//busy_wait(t1);
-	busy_wait_times(2);
+	busy_wait_times(1);
 
 
 	return 0;
