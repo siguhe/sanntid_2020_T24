@@ -1,5 +1,5 @@
 #program executable name
-TARGET = sort_args
+TARGET = sort_args.exe
 
 #compiler flags
 CFLAGS = -g -Wall -std=c99
