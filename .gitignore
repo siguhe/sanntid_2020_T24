@@ -5,3 +5,6 @@
 *.obj
 *.exe
 
+*.swp
+*.swo
+
