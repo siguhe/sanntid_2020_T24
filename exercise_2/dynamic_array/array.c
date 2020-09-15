@@ -73,6 +73,14 @@ void array_print(Array a){
     printf("}\n");
 }
 
+    
+
+void array_print_address(Array a){
+    for(int i=0; i< a.back; i++){
+        printf("data: %ld, pointer: %p\n",a.data[i],&(a.data[i]));
+    }
+
+}
 
 // Capacity
 
@@ -91,21 +99,16 @@ void array_reserve(Array* a, long capacity){
 }
 
 void array_insertBack(Array* a, long stuff){
-    printf("Array before insert:\n");
-    array_print(*a);
     
     const long idx = array_length(*a);
-    const int cap_multi = 2;
+    const float cap_multi = 1.5f;
 
     if (idx >=a->capacity) {
         printf("\n\nTime to double\n\n");
-        array_reserve(a, a->capacity * cap_multi);
+        array_reserve(a, (long)(a->capacity * cap_multi));
     }
     a->data[idx] = stuff;
     a->back++;
-    printf("Stuff: %ld, index: %ld, capacity: %ld, a[idx]: %ld\n",stuff, idx, a->capacity, a->data[idx]);
-    printf("Array after insert:\n");
-    array_print(*a);
 }
 
 
