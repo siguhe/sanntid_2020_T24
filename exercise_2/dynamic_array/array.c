@@ -81,12 +81,12 @@ long array_length(Array a){
 }
 
 void array_reserve(Array* a, long capacity){
-    Array new_arr = array_new(capacity);
-    for(int i=0; i<a->capacity; i++){
-        new_arr.data[i] = a->data[i];
-    }
-    array_destroy(*a);
-    a->data = new_arr.data;
+
+    printf("\n\nnew_cap: %ld, old_cap: %ld\n\n",capacity, a->capacity);
+    long *new_data = malloc(sizeof(long)*capacity);
+    memcpy(new_data, a->data, sizeof(long)*a->capacity); 
+    free(a->data);
+    a->data = new_data;
     a->capacity=capacity;
 }
 
@@ -97,7 +97,7 @@ void array_insertBack(Array* a, long stuff){
     const long idx = array_length(*a);
     const int cap_multi = 2;
 
-    if (idx > a->capacity) {
+    if (idx >=a->capacity) {
         printf("\n\nTime to double\n\n");
         array_reserve(a, a->capacity * cap_multi);
     }
