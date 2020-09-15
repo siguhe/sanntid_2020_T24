@@ -2,10 +2,11 @@
 TARGET = dynamic_array.exe
 
 #compiler flags
-CFLAGS = -g -Wall -std=gnu11 #-g -fsanitize=address
+CFLAGS = -g -Wall -std=gnu11 -fsanitize=address 
 
 #linker flags
-LDFLAGS = -g
+LDFLAGS = -g -fsanitize=address 
+
 
 #listfo sources
 SOURCES = $(shell find -name "*.c")
