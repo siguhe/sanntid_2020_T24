@@ -73,6 +73,14 @@ void array_print(Array a){
     printf("}\n");
 }
 
+    
+
+void array_print_address(Array a){
+    for(int i=0; i< a.back; i++){
+        printf("data: %ld, pointer: %p\n",a.data[i],&(a.data[i]));
+    }
+
+}
 
 // Capacity
 
@@ -81,31 +89,26 @@ long array_length(Array a){
 }
 
 void array_reserve(Array* a, long capacity){
-    Array new_arr = array_new(capacity);
-    for(int i=0; i<a->capacity; i++){
-        new_arr.data[i] = a->data[i];
-    }
-    array_destroy(*a);
-    a->data = new_arr.data;
+
+    printf("\n\nnew_cap: %ld, old_cap: %ld\n\n",capacity, a->capacity);
+    long *new_data = malloc(sizeof(long)*capacity);
+    memcpy(new_data, a->data, sizeof(long)*a->capacity); 
+    free(a->data);
+    a->data = new_data;
     a->capacity=capacity;
 }
 
 void array_insertBack(Array* a, long stuff){
-    printf("Array before insert:\n");
-    array_print(*a);
     
     const long idx = array_length(*a);
-    const int cap_multi = 2;
+    const float cap_multi = 1.5f;
 
-    if (idx > a->capacity) {
+    if (idx >=a->capacity) {
         printf("\n\nTime to double\n\n");
-        array_reserve(a, a->capacity * cap_multi);
+        array_reserve(a, (long)(a->capacity * cap_multi));
     }
     a->data[idx] = stuff;
     a->back++;
-    printf("Stuff: %ld, index: %ld, capacity: %ld, a[idx]: %ld\n",stuff, idx, a->capacity, a->data[idx]);
-    printf("Array after insert:\n");
-    array_print(*a);
 }
 
 
