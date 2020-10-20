@@ -141,22 +141,21 @@ int main(int argc, char* argv[])
 	RT_TASK task_B_handle;
 	RT_TASK task_C_handle;
 
+	pthread_t disturbances[10];
+
 	printf("start task\n");
 	//rt_task_create(&hello_task, str, 0, 50, T_CPU(1));
 	rt_task_create(&task_A_handle, str, 0, 50, T_CPU(1));
 	rt_task_create(&task_B_handle, str, 0, 50, T_CPU(1));
 	rt_task_create(&task_C_handle, str, 0, 50, T_CPU(1));
 
-
-	pthread_t disturbances[10]; 
 	if(DISTURBANCE)
 	{
-		for(int i=0; i<10; i++)
+		for(int i = 0; i<10; i++)
 		{
-			pthread_create(&disturbances[i], NULL ,disturbance, NULL);
+			pthread_create(&disturbances[i], NULL, disturbance, NULL);
 		}
 	}
-
 
 	if(PERIODIC){
 		//rt_task_start(&hello_task, &helloWorld, 0);
@@ -168,5 +167,14 @@ int main(int argc, char* argv[])
 		rt_task_start(&task_B_handle, &task_B_busy, 0);
 		rt_task_start(&task_C_handle, &task_C_busy, 0);
 	}
+
+	if(DISTURBANCE) 
+	{ 
+		for(int i = 0; i <10; i++)
+		{
+			pthread_join(disturbances[i], NULL);
+		}
+	}
+
 	while (1) {}
 }
