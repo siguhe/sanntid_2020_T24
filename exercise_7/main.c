@@ -34,24 +34,29 @@ void task_A_busy(void *arg)
 {
 	printf("Inside task A \n");
 	while(1) {
-		while (io_read(CH_A)) {
+		if (!io_read(CH_A)) {
+			io_write(CH_A, 0);
+			rt_timer_spin(TIME_SLEEP);
+			io_write(CH_A, 1);
+		} else {
+			rt_task_yield();
 		}
-		io_write(CH_A, 0);
-		usleep(TIME_SLEEP);
-		io_write(CH_A, 1);
 
 	}
 }
+
 void task_B_busy(void *arg)
 {
 	printf("Inside task B \n");
 	while(1) {
-		while (io_read(CH_B)) {
-		}
-		io_write(CH_B, 0);
-		usleep(TIME_SLEEP);
-		io_write(CH_B, 1);
+		if (!io_read(CH_B)) {
+			io_write(CH_B, 0);
+			rt_timer_spin(TIME_SLEEP);
+			io_write(CH_B, 1);
+		} else {
+			rt_task_yield();
 
+		}
 	}
 }
 
@@ -59,11 +64,13 @@ void task_C_busy(void *arg)
 {
 	printf("Inside task C \n");
 	while(1) {
-		while (io_read(CH_C)) {
+		if (!io_read(CH_C)) {
+			io_write(CH_C, 0);
+			rt_timer_spin(TIME_SLEEP);
+			io_write(CH_C, 1);
+		} else {
+			rt_task_yield();
 		}
-		io_write(CH_C, 0);
-		usleep(TIME_SLEEP);
-		io_write(CH_C, 1);
 
 	}
 }
@@ -80,7 +87,7 @@ void task_A_periodic(void *arg)
 	while(1) {
 		if (!io_read(CH_A)) {
 			io_write(CH_A, 0);
-			usleep(TIME_SLEEP);
+			rt_timer_spin(TIME_SLEEP);
 			io_write(CH_A, 1);
 		}
 		rt_task_wait_period(NULL);
@@ -95,7 +102,7 @@ void task_B_periodic(void *arg)
 	while(1) {
 		if (!io_read(CH_B)) {
 			io_write(CH_B, 0);
-			usleep(TIME_SLEEP);
+			rt_timer_spin(TIME_SLEEP);
 			io_write(CH_B, 1);
 		}
 		rt_task_wait_period(NULL);
@@ -110,7 +117,7 @@ void task_C_periodic(void *arg)
 	while(1) {
 		if (!io_read(CH_C)) {
 			io_write(CH_C, 0);
-			usleep(TIME_SLEEP);
+			rt_timer_spin(TIME_SLEEP);
 			io_write(CH_C, 1);
 		}
 		rt_task_wait_period(NULL);
@@ -129,8 +136,8 @@ void* disturbance(){
 ////////// MAIN ////////////
 ////////////////////
 
-#define PERIODIC 0
-#define DISTURBANCE 0
+#define PERIODIC 1
+#define DISTURBANCE 1
 int main(int argc, char* argv[])
 {
 	mlockall(MCL_CURRENT | MCL_FUTURE);
