@@ -14,14 +14,17 @@
 #include <rtdk.h>
 
 
-#define MS100 100000000
-#define S1 1000000000
+//#define MS100 (RTIME)100000000
+//#define S1 (RTIME)1000000000
+
+RTIME S1 = 	100000000;
+RTIME MS100 = 	10000000;
 
 
 #define PRIO_LOWEST 1
 #define PRIO_MID 2
 #define PRIO_HIGHEST 3
-#define PRIO_CEILING 50
+#define PRIO_CEILING (int)50
 #define PRIO_MASTER 80
 
 
@@ -47,7 +50,10 @@ static struct ICPP_mut mut_A = {0};
 static struct ICPP_mut mut_B = {0};
 
 
+
+
 void cleanup(){
+	rt_printf("Cleaning up mutexes\n");
 	rt_mutex_delete(&mut_B.mutex);
 	rt_mutex_delete(&mut_A.mutex);
 	rt_sem_delete(&barrier);
@@ -55,39 +61,21 @@ void cleanup(){
 
 void icpp_lock( struct Task_prio *task_prio, struct ICPP_mut *mut)
 {
-
-	rt_timer_spin(1000);
-	if (task_A_prio.current == PRIO_CEILING ||
-			task_B_prio.current == PRIO_CEILING) {
-		// nothing
-		rt_printf("Highest prio already taken!\n");
-	} else {
-		rt_printf("This task gets highest prio!\n");
-		task_prio->current = PRIO_CEILING;
-		rt_task_set_priority(&(task_prio->task), task_prio->current);
-	}
-
-	if (task_prio->current == PRIO_CEILING) {
-		rt_printf("We acquire the mutex yey!\n");
+		//task_prio->current = PRIO_CEILING;
+		mut->taken = 1;
+		rt_printf("Set priority for task%d to prio:%d!\n", task_prio->task);
+		rt_task_set_priority(NULL, 50);
 		rt_mutex_acquire(&mut->mutex, TM_INFINITE);	
-	} else {
-		rt_printf("We wait for the mutex yey!\n");
-
-		// Wait until highest priority task is done
-		while (task_A_prio.current == PRIO_CEILING || task_B_prio.current == PRIO_CEILING);
-
-		rt_mutex_acquire(&mut->mutex, TM_INFINITE);	
-		rt_printf("After ages we get the mutex!\n");
-
-	}
-
 }
 
 void icpp_unlock( struct Task_prio *task_prio, struct ICPP_mut *mut){
+	mut->taken = 0;
+	rt_printf("About to release!\n");
 	rt_mutex_release(&mut->mutex);
-	task_prio->current = task_prio->original;
 	rt_printf("Mutex released!\n");
-	rt_task_set_priority(&task_prio->task, task_prio->original);
+	task_prio->current = task_prio->original;	
+	rt_printf("Original prio: %d of task %d\n", task_prio->original, task_prio->task);
+	rt_task_set_priority(NULL, task_prio->original);
 }
 
 
